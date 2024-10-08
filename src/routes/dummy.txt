@@ -1,0 +1,1 @@
+Este txt esta para que git pueda identificar al carpeta, cuando se desarrolle en ella se tiene que borrar esto.

@@ -3,16 +3,10 @@ import { deliveryControllers } from '../controllers/index';
 
 const router = Router();
 
-//router.get('', controller.getAll);
-//router.post('/login', controller.login);
-
-router.post('', deliveryControllers.create);
-router.get('', deliveryControllers.getAll)
-
-// TODO: Crear: POST /deliveries
-// TODO: Leer (todas): GET /deliveries
-// TODO: Leer (por ID): GET /deliveries/{deliveryId}
-// TODO: Actualizar: PUT /deliveries/{deliveryId}
-// TODO: Eliminar: DELETE /deliveries/{deliveryId}
+router.post('', deliveryControllers.create); // POST /deliveries
+router.get('', deliveryControllers.getAll); // GET /deliveries
+router.get('/:deliveryId', deliveryControllers.getById); // GET /deliveries/{deliveryId}
+router.put('/:deliveryId', deliveryControllers.update); // PUT /deliveries/{deliveryId}
+router.delete('/:deliveryId', deliveryControllers.delete); // DELETE /deliveries/{deliveryId}
 
 export default router;

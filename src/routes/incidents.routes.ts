@@ -1,15 +1,13 @@
 import { Router } from 'express';
-//import  controller  from '../controllers/users.controller';
+import {incidentControllers} from '../controllers/index';
 
 const router = Router();
 
-//router.get('', controller.getAll);
-//router.post('/login', controller.login);
+router.post('', incidentControllers.create); // POST /deliveries
+router.get('', incidentControllers.getAll); // GET /deliveries
+router.get('/:deliveryId', incidentControllers.getById); // GET /deliveries/{deliveryId}
+router.put('/:deliveryId', incidentControllers.update); // PUT /deliveries/{deliveryId}
+router.delete('/:deliveryId', incidentControllers.delete); // DELETE /deliveries/{deliveryId}
 
-//TODO: Crear: POST /incidents
-//TODO: Leer (todas): GET /incidents
-//TODO: Leer (por ID): GET /incidents/{incidentId}
-//TODO: Actualizar: PUT /incidents/{incidentId}
-//TODO: Eliminar: DELETE /incidents/{incidentId}
 
 export default router;

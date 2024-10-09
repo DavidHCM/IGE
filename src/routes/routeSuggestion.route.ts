@@ -1,15 +1,13 @@
 import { Router } from 'express';
-//import  controller  from '../controllers/users.controller';
+import {routeSuggestionControllers} from '../controllers/index';
 
 const router = Router();
 
-//router.get('', controller.getAll);
-//router.post('/login', controller.login);
+router.post('', routeSuggestionControllers.create); // POST /deliveries
+router.get('', routeSuggestionControllers.getAll); // GET /deliveries
+router.get('/:deliveryId', routeSuggestionControllers.getById); // GET /deliveries/{deliveryId}
+router.put('/:deliveryId', routeSuggestionControllers.update); // PUT /deliveries/{deliveryId}
+router.delete('/:deliveryId', routeSuggestionControllers.delete); // DELETE /deliveries/{deliveryId}
 
-//TODO: Crear: POST /routes
-//TODO: Leer (todas): GET /routes
-//TODO: Leer (por ID): GET /routes/{routeSuggestionId}
-//TODO: Actualizar: PUT /routes/{routeSuggestionId}
-//TODO: Eliminar: DELETE /routes/{routeSuggestionId}
 
 export default router;

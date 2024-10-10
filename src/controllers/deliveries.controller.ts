@@ -65,9 +65,15 @@ class deliveryController {
         try {
             const deliveryId = req.params.deliveryId;
             const existingDelivery = await Delivery.findOne({ deliveryId });
+            if (!existingDelivery) {
+                throw ('Delivery does not exist: ' + HTTP_STATUS.NOT_FOUND);
+            }
             res.send(existingDelivery);
         } catch (err) {
-            res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'No deliveries found' });
+            const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.NOT_FOUND;
+            const message = err instanceof Error && 'message' in err ? err.message : 'Error creating delivery';
+
+            res.status(status).send({ message, error: err });
         }
     };
 

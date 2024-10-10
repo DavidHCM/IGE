@@ -5,9 +5,9 @@ const router = Router();
 
 router.post('', incidentControllers.create); // POST /deliveries
 router.get('', incidentControllers.getAll); // GET /deliveries
-router.get('/:deliveryId', incidentControllers.getById); // GET /deliveries/{deliveryId}
-router.put('/:deliveryId', incidentControllers.update); // PUT /deliveries/{deliveryId}
-router.delete('/:deliveryId', incidentControllers.delete); // DELETE /deliveries/{deliveryId}
+router.get('/:incidentId', incidentControllers.getById); // GET /deliveries/{deliveryId}
+router.put('/:incidentId', incidentControllers.update); // PUT /deliveries/{deliveryId}
+router.delete('/:incidentId', incidentControllers.delete); // DELETE /deliveries/{deliveryId}
 
 
 export default router;

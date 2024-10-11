@@ -3,11 +3,11 @@ import {incidentControllers} from '../controllers/index';
 
 const router = Router();
 
-router.post('', incidentControllers.create); // POST /deliveries
-router.get('', incidentControllers.getAll); // GET /deliveries
-router.get('/:incidentId', incidentControllers.getById); // GET /deliveries/{deliveryId}
-router.put('/:incidentId', incidentControllers.update); // PUT /deliveries/{deliveryId}
-router.delete('/:incidentId', incidentControllers.delete); // DELETE /deliveries/{deliveryId}
+router.post('', incidentControllers.create); // POST /incident
+router.get('', incidentControllers.getAll); // GET /incident
+router.get('/:incidentId', incidentControllers.getById); // GET /incident/{incidentId}
+router.put('/:incidentId', incidentControllers.update); // PUT /incident/{incidentId}
+router.delete('/:incidentId', incidentControllers.delete); // DELETE /incident/{incidentId}
 
 
 export default router;

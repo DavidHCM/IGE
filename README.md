@@ -6,5 +6,6 @@ npm i express dotenv multer mongoose bcrypt jsonwebtoken
 
 npm i -D typescript ts-node nodemon @types/express @types/mongoose @types/node @types/multer @types/bcrypt @types/jsonwebtoken
 
-Ejemplo de .env
+Ejemplo de .env:
+
 DB_URL=url de mongo

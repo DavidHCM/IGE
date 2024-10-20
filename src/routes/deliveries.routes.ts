@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import { deliveryControllers } from '../controllers/index';
+import {authenticate, authorize} from "../middlewares";
 
 const router = Router();
 
-router.post('', deliveryControllers.create); // POST /deliveries
-router.get('', deliveryControllers.getAll); // GET /deliveries
-router.get('/:deliveryId', deliveryControllers.getById); // GET /deliveries/{deliveryId}
-router.put('/:deliveryId', deliveryControllers.update); // PUT /deliveries/{deliveryId}
-router.delete('/:deliveryId', deliveryControllers.delete); // DELETE /deliveries/{deliveryId}
+router.post('', authenticate, authorize(['admin']), deliveryControllers.create); // POST /deliveries
+router.get('', authenticate, authorize(['admin', 'driver', 'user', 'support']), deliveryControllers.getAll); // GET /deliveries
+router.get('/:deliveryId', authenticate, authorize(['admin', 'driver', 'user', 'support']), deliveryControllers.getById); // GET /deliveries/{deliveryId}
+router.put('/:deliveryId', authenticate, authorize(['admin', 'driver']), deliveryControllers.update); // PUT /deliveries/{deliveryId}
+router.delete('/:deliveryId', authenticate, authorize(['admin']), deliveryControllers.delete); // DELETE /deliveries/{deliveryId}
 
 export default router;

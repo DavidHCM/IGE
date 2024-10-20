@@ -5,7 +5,7 @@ const userSchema = new Schema({
     name: { type: SchemaTypes.String, required: true },
     email: { type: SchemaTypes.String, required: true },
     password: { type: SchemaTypes.String, required: true },
-    role: { type: SchemaTypes.String, required: true },
+    role: { type: SchemaTypes.String, required: true }, // admin, support, driver, user
     status: { type: SchemaTypes.String, required: false }, // new, active, inactive, deleted, archived
     createdAt: { type: SchemaTypes.Date, default: Date.now },
 });

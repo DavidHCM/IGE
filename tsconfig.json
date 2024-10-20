@@ -7,7 +7,9 @@
     "noImplicitAny": true,
     "strict": true,
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "strictNullChecks": false,
   },
   "include": [
     "src/**/*.ts"

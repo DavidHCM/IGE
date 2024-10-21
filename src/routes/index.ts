@@ -25,19 +25,76 @@ router.get("/", (req, res) => {
     res.send("Api is running");
 });
 
-router.use("/deliveries",deliveriesRoutes);
-router.use("/incident",incidentsRoutes);
-router.use("/routeSuggestion",routeSuggestionRoutes);
-router.use("/user",userRoutes);
-router.use("/ranking",rankingRoutes);
-router.use("/notification",notificationRoute);
-router.use("/message",chatMessageRoute);
+/**
+ * @swagger
+ * tags:
+ *  name: Deliveries
+ *  description: Deliveries management
+ */
+router.use("/deliveries", deliveriesRoutes);
 
+/**
+ * @swagger
+ * tags:
+ *  name: Incident
+ *  description: Incidents management
+ */
+router.use("/incident", incidentsRoutes);
+
+/**
+ * @swagger
+ * tags:
+ *  name: RouteSuggestion
+ *  description: Route suggestions management
+ */
+router.use("/routeSuggestion", routeSuggestionRoutes);
+
+/**
+ * @swagger
+ * tags:
+ *  name: User
+ *  description: User management
+ */
+router.use("/user", userRoutes);
+
+/**
+ * @swagger
+ * tags:
+ *  name: Ranking
+ *  description: Rankings management
+ */
+router.use("/ranking", rankingRoutes);
+
+/**
+ * @swagger
+ * tags:
+ *  name: Notification
+ *  description: Notifications management
+ */
+router.use("/notification", notificationRoute);
+
+/**
+ * @swagger
+ * tags:
+ *  name: Chat
+ *  description: Chat messages management
+ */
+router.use("/message", chatMessageRoute);
+
+/**
+ * @swagger
+ * /error:
+ *  post:
+ *   tags: [Error]
+ *   description: Handles errors in the API
+ *   responses:
+ *    '400':
+ *      description: Bad request error
+ */
 router.use((err: any, req: Request, res: Response, next: NextFunction) => {
     const statusCode = HTTP_STATUS.BAD_REQUEST;
     const message = err.message.split(': ')[0];
     res.status(statusCode).send({ message, statusCode });
 });
-
 
 export default router;

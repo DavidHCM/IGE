@@ -11,7 +11,7 @@ const secretKey = process.env.JWT_SECRET;
 class userController {
     async getAll(req: Request, res: Response) {
         try {
-            const results = await User.find({});
+            const results = await User.find({}, { password: 0 });
             res.send(results);
         } catch (err) {
             res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'No users found' });
@@ -21,7 +21,7 @@ class userController {
     async getById(req: Request, res: Response) {
         try {
             const userId = req.params.userId;
-            const existingUser = await User.findOne({ userId });
+            const existingUser = await User.findOne({ userId }, { password: 0 });
             if (!existingUser) {
                 throw ('User does not exist: ' + HTTP_STATUS.NOT_FOUND);
             }
@@ -139,8 +139,8 @@ class userController {
             if (!isPasswordValid) {
                 throw 'Invalid credentials: ' + HTTP_STATUS.AUTH_ERROR;
             }
-            // TODO: Revisar si en el sign del token meteriamos la password aunque este hasheada: password: expectedUser.password
-            const token = jwt.sign({ email: expectedUser.email ,role: expectedUser.role}, secretKey as string);
+
+            const token = jwt.sign({userId: expectedUser.userId, email: expectedUser.email ,role: expectedUser.role}, secretKey as string);
 
             res.status(HTTP_STATUS.SUCCESS).send({ token, message: 'Login successful' });
 

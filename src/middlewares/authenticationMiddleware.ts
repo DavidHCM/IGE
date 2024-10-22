@@ -5,7 +5,9 @@ import { User } from "../types/user";
 const secretKey = process.env.JWT_SECRET;
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
-    const token = req.query.key as string;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+
     if (!token) {
         throw new Error('Authentication required: ' + HTTP_STATUS.AUTH_ERROR);
     }

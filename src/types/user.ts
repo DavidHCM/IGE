@@ -7,3 +7,11 @@ export interface User {
     status?: string;
     createdAt?: Date;
 }
+
+declare global {
+    namespace Express {
+        interface Request {
+            user?: User;
+        }
+    }
+}

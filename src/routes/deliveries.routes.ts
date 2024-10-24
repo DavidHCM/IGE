@@ -1,12 +1,168 @@
 import { Router } from 'express';
 import { deliveryControllers } from '../controllers/index';
+import { authenticate, authorize } from "../middlewares";
 
 const router = Router();
 
-router.post('', deliveryControllers.create); // POST /deliveries
-router.get('', deliveryControllers.getAll); // GET /deliveries
-router.get('/:deliveryId', deliveryControllers.getById); // GET /deliveries/{deliveryId}
-router.put('/:deliveryId', deliveryControllers.update); // PUT /deliveries/{deliveryId}
-router.delete('/:deliveryId', deliveryControllers.delete); // DELETE /deliveries/{deliveryId}
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *   Delivery:
+ *    type: object
+ *    required:
+ *     - address
+ *     - deliveryDate
+ *    properties:
+ *     address:
+ *      type: string
+ *      description: The address where the delivery will be made
+ *     deliveryDate:
+ *      type: string
+ *      format: date-time
+ *      description: The scheduled delivery date
+ *     status:
+ *      type: string
+ *      description: The status of the delivery
+ */
+
+/**
+ * @swagger
+ * /deliveries:
+ *  post:
+ *   description: Create a new delivery
+ *   tags: [Deliveries]
+ *   security:
+ *    - bearerAuth: []
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       $ref: '#/components/schemas/Delivery'
+ *   responses:
+ *    201:
+ *     description: Delivery created successfully
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ */
+router.post('', authenticate, authorize(['admin']), deliveryControllers.create);
+
+/**
+ * @swagger
+ * /deliveries:
+ *  get:
+ *   description: Get all deliveries
+ *   tags: [Deliveries]
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    200:
+ *     description: A list of deliveries
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: array
+ *        items:
+ *         $ref: '#/components/schemas/Delivery'
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ */
+router.get('', authenticate, authorize(['admin', 'driver', 'user', 'support']), deliveryControllers.getAll);
+
+/**
+ * @swagger
+ * /deliveries/{deliveryId}:
+ *  get:
+ *   description: Get a specific delivery by ID
+ *   tags: [Deliveries]
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: deliveryId
+ *      in: path
+ *      required: true
+ *      schema:
+ *       type: string
+ *      description: The ID of the delivery
+ *   responses:
+ *    200:
+ *     description: Delivery details
+ *     content:
+ *      application/json:
+ *       schema:
+ *        $ref: '#/components/schemas/Delivery'
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ *    404:
+ *     description: Delivery not found
+ */
+router.get('/:deliveryId', authenticate, authorize(['admin', 'driver', 'user', 'support']), deliveryControllers.getById);
+
+/**
+ * @swagger
+ * /deliveries/{deliveryId}:
+ *  put:
+ *   description: Update a delivery by ID
+ *   tags: [Deliveries]
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: deliveryId
+ *      in: path
+ *      required: true
+ *      schema:
+ *       type: string
+ *      description: The ID of the delivery
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       $ref: '#/components/schemas/Delivery'
+ *   responses:
+ *    200:
+ *     description: Delivery updated successfully
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ *    404:
+ *     description: Delivery not found
+ */
+router.put('/:deliveryId', authenticate, authorize(['admin', 'driver']), deliveryControllers.update);
+
+/**
+ * @swagger
+ * /deliveries/{deliveryId}:
+ *  delete:
+ *   description: Delete a delivery by ID
+ *   tags: [Deliveries]
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: deliveryId
+ *      in: path
+ *      required: true
+ *      schema:
+ *       type: string
+ *      description: The ID of the delivery
+ *   responses:
+ *    200:
+ *     description: Delivery deleted successfully
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ *    404:
+ *     description: Delivery not found
+ */
+router.delete('/:deliveryId', authenticate, authorize(['admin']), deliveryControllers.delete);
 
 export default router;

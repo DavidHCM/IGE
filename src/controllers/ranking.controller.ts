@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Ranking from './../models/ranking.model';
 import { HTTP_STATUS } from '../types/http-status-codes';
 import { Ranking as RankingType } from '../types/ranking';
+import {userControllers} from "./user.controller";
 
 class rankingController {
     async create(req: Request, res: Response) {
@@ -37,11 +38,18 @@ class rankingController {
     async getAll(req: Request, res: Response) {
         try {
             const results = await Ranking.find({});
-            res.send(results);
+            const mapUsers = results.map(item => item.userId);
+
+            const users = await Promise.all(mapUsers.map(async userId => {
+                return userControllers.getId(userId);
+            }));
+
+            res.send({rankings: results, users: users});
         } catch (err) {
             res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'No rankings found' });
         }
     }
+
 
     async getById(req: Request, res: Response) {
         try {

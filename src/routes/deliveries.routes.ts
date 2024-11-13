@@ -54,6 +54,55 @@ router.post('', authenticate, authorize(['admin']), deliveryControllers.create);
  * @swagger
  * /deliveries:
  *  get:
+ *   description: Get by driver with query deliveries
+ *   tags: [Deliveries]
+ *   security:
+ *    - bearerAuth: []
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       $ref: '#/components/schemas/Delivery'
+ *   responses:
+ *    201:
+ *     description: Delivery from driver
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ */
+router.get('/byDriver', authenticate, authorize(['admin', 'driver']), deliveryControllers.getByDriver);
+
+/**
+ * @swagger
+ * /deliveries/byDate:
+ *  post:
+ *   description: Get by date with body
+ *   tags: [Deliveries]
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    200:
+ *     description: A list of deliveries by date
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: array
+ *        items:
+ *         $ref: '#/components/schemas/Delivery'
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ */
+router.post('/byDate', authenticate, authorize(['admin', 'driver', 'user', 'support']), deliveryControllers.getByDate);
+
+
+/**
+ * @swagger
+ * /deliveries:
+ *  get:
  *   description: Get all deliveries
  *   tags: [Deliveries]
  *   security:

@@ -22,9 +22,6 @@ const router = Router();
  *      type: string
  *      format: email
  *      description: The user's email address
- *     password:
- *      type: string
- *      description: The user's password
  *     createdAt:
  *      type: string
  *      format: date-time
@@ -57,6 +54,37 @@ router.get('', authenticate, authorize(['admin']), userControllers.getAll);
 
 /**
  * @swagger
+ * /user/drivers:
+ *  get:
+ *   description: Get a the users that are drivers
+ *   tags: [User]
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: userId
+ *      in: path
+ *      required: true
+ *      schema:
+ *       type: string
+ *      description: The users that are drivers
+ *   responses:
+ *    200:
+ *     description: User details
+ *     content:
+ *      application/json:
+ *       schema:
+ *        $ref: '#/components/schemas/User'
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ *    404:
+ *     description: User not found
+ */
+router.get('/drivers',authenticate, authorize(['admin', 'driver', 'support']), userControllers.getDrivers);
+
+/**
+ * @swagger
  * /user/{userId}:
  *  get:
  *   description: Get a specific user by ID
@@ -84,7 +112,7 @@ router.get('', authenticate, authorize(['admin']), userControllers.getAll);
  *    404:
  *     description: User not found
  */
-router.get('/:userId', authenticate, authorize(['admin', 'user', 'support']), userControllers.getById);
+router.get('/:userId', authenticate, authorize(['admin', 'driver', 'support']), userControllers.getById);
 
 /**
  * @swagger
@@ -117,7 +145,7 @@ router.get('/:userId', authenticate, authorize(['admin', 'user', 'support']), us
  *    404:
  *     description: User not found
  */
-router.put('/:userId', authenticate, authorize(['admin', 'user']), userControllers.update);
+router.put('/:userId', authenticate, authorize(['admin', 'driver']), userControllers.update);
 
 /**
  * @swagger

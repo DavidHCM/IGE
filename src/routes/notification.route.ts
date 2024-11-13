@@ -79,6 +79,30 @@ router.get('', authenticate, authorize(['admin', 'support', 'driver', 'user']), 
 
 /**
  * @swagger
+ * /notification:
+ *  get:
+ *   description: Get all notifications by user
+ *   tags: [Notification]
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    200:
+ *     description: A list of notifications of user
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: array
+ *        items:
+ *         $ref: '#/components/schemas/Notification'
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ */
+router.get('/byUser', authenticate, authorize(['admin', 'support', 'driver', 'user']), notificationControllers.getForPerson);
+
+/**
+ * @swagger
  * /notification/{notificationId}:
  *  get:
  *   description: Get a specific notification by ID

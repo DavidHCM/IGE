@@ -18,6 +18,15 @@ class userController {
         }
     }
 
+    async getDrivers(req: Request, res: Response) {
+        try {
+            const results = await User.find({ role: 'driver' }, { password: 0 }); 
+            res.send(results);
+        } catch (err) {
+            res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'No drivers found' });
+        }
+    }
+
     async getById(req: Request, res: Response) {
         try {
             const userId = req.params.userId;
@@ -33,6 +42,23 @@ class userController {
             res.status(status).send({ message, error: err });
         }
     }
+
+    async getId(user: any) {
+        try {
+            const userId = user;
+            const existingUser = await User.findOne({ userId }, { password: 0 });
+            if (!existingUser) {
+                throw ('User does not exist: ' + HTTP_STATUS.NOT_FOUND);
+            }
+            return existingUser
+
+        } catch (err) {
+            const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.NOT_FOUND;
+            const message = err instanceof Error && 'message' in err ? err.message : 'Error fetching user';
+
+            return {message, error:err}
+        }
+    };
 
     async update(req: Request, res: Response) {
         try {

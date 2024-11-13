@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import Notification from './../models/notification.model';
 import { HTTP_STATUS } from '../types/http-status-codes';
 import { Notification as NotificationType } from '../types/notification';
+import {userControllers} from "./user.controller";
+import notificationRoute from "../routes/notification.route";
 
 class notificationController {
     async create(req: Request, res: Response) {
@@ -59,6 +61,25 @@ class notificationController {
                 throw ('Notification does not exist: ' + HTTP_STATUS.NOT_FOUND);
             }
             res.send(existingNotification);
+        } catch (err) {
+            const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.NOT_FOUND;
+            const message = err instanceof Error && 'message' in err ? err.message : 'Error fetching notification';
+
+            res.status(status).send({ message, error: err });
+        }
+    }
+
+    async getForPerson(req: Request, res: Response) {
+        try {
+            const userId = req.query.userId;
+
+            const existingNotification = await Notification.find({ userId });
+            if (!existingNotification) {
+                throw ('Notification does not exist: ' + HTTP_STATUS.NOT_FOUND);
+            }
+            const user = await userControllers.getId(userId);
+
+            res.send({notification: existingNotification, user: user});
         } catch (err) {
             const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.NOT_FOUND;
             const message = err instanceof Error && 'message' in err ? err.message : 'Error fetching notification';

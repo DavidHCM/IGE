@@ -79,6 +79,30 @@ router.get('', authenticate, authorize(['admin', 'support']), incidentController
 
 /**
  * @swagger
+ * /incident/OpenIncidents:
+ *  get:
+ *   description: Get all the open incidents
+ *   tags: [Incident]
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    200:
+ *     description: A list of open incident reports
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: array
+ *        items:
+ *         $ref: '#/components/schemas/Incident'
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ */
+router.get('/OpenIncidents', authenticate, authorize(['admin', 'support']), incidentControllers.getOpenIncidents);
+
+/**
+ * @swagger
  * /incident/{incidentId}:
  *  get:
  *   description: Get a specific incident report by ID
@@ -106,7 +130,7 @@ router.get('', authenticate, authorize(['admin', 'support']), incidentController
  *    404:
  *     description: Incident not found
  */
-router.get('/:incidentId', authenticate, authorize(['admin', 'user', 'support']), incidentControllers.getById);
+router.get('/:incidentId', authenticate, authorize(['admin', 'driver', 'support']), incidentControllers.getById);
 
 /**
  * @swagger

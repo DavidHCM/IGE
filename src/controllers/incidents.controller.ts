@@ -57,11 +57,27 @@ class incidentController {
         }
     }
 
+    async getOpenIncidents(req: Request, res: Response) {
+        try {
+            const results = await Incident.find({ status: "open" });
+            if (!results.length) {
+                throw ('Deliveries not found: ' + HTTP_STATUS.NOT_FOUND);
+            }
+
+            res.send(results);
+        } catch (err) {
+            const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.NOT_FOUND;
+            const message = err instanceof Error && 'message' in err ? err.message : 'Error searching delivery';
+
+            res.status(status).send({message, error: err});
+        }
+    }
+
 
     async getById(req: Request, res: Response) {
         try {
             const incidentId = req.params.incidentId;
-            console.log(incidentId)
+            //console.log(incidentId)
             const existingIncident = await Incident.findOne({ incidentId });
             if (!existingIncident) {
                 throw ('Incident does not exist: ' + HTTP_STATUS.NOT_FOUND);

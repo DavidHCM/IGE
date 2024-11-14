@@ -125,6 +125,30 @@ router.get('', authenticate, authorize(['admin', 'driver', 'user', 'support']), 
 
 /**
  * @swagger
+ * /deliveries/active:
+ *  get:
+ *   description: Get all active deliveries
+ *   tags: [Deliveries]
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    200:
+ *     description: A list of active deliveries
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: array
+ *        items:
+ *         $ref: '#/components/schemas/Delivery'
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ */
+router.get('/active', authenticate, authorize(['admin', 'driver', 'user', 'support']), deliveryControllers.getAllActive);
+
+/**
+ * @swagger
  * /deliveries/{deliveryId}:
  *  get:
  *   description: Get a specific delivery by ID

@@ -2,42 +2,37 @@ import { Request, Response } from 'express';
 import Incident from './../models/incident.model';
 import { HTTP_STATUS } from '../types/http-status-codes';
 import { Incident as IncidentType } from '../types/incident';
+import {userControllers} from "./user.controller";
+import { v4 as uuidv4 } from 'uuid';
+
 
 class incidentController {
 
     async create(req: Request, res: Response) {
         try {
             const {
-                incidentId,
                 reportedBy,
                 deliveryId,
                 type,
                 description,
                 status,
-                createdAt,
-                resolvedAt,
                 location
-            }: IncidentType = req.body;
-
-            const existingIncident = await Incident.findOne({ incidentId });
-
-            if (existingIncident) {
-                throw ('Incident already exists: ' + HTTP_STATUS.CONFLICT);
-            }
+            }: Partial<IncidentType> = req.body;
 
             const newIncident = new Incident({
-                incidentId,
+                incidentId: uuidv4(),
                 reportedBy,
                 deliveryId,
                 type,
                 description,
-                status,
-                createdAt,
-                resolvedAt,
-                location
+                status: status || "open",
+                location,
+                createdAt: new Date(),
+                resolvedAt: null
             });
 
             const savedIncident = await newIncident.save();
+
             res.status(HTTP_STATUS.SUCCESS).json(savedIncident);
         } catch (err) {
             const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.BAD_REQUEST;
@@ -51,7 +46,32 @@ class incidentController {
     async getAll(req: Request, res: Response) {
         try {
             const results = await Incident.find({});
-            res.send(results);
+            if (!results) {
+                throw ('There are no results: ' + HTTP_STATUS.NOT_FOUND);
+            }
+            const mapUsers = results.map(item => item.reportedBy);
+            const users = await Promise.all(mapUsers.map(async userId => {
+                return userControllers.getId(userId);
+            }));
+
+
+            res.send({incident: results, user: users});
+        } catch (err) {
+            res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'No incidents found' });
+        }
+    }
+
+    async getByDriver(req: Request, res: Response) {
+        try {
+            const reportedBy = req.query.driverId;
+            const existingIncidents = await Incident.find({ reportedBy });
+            if (!existingIncidents) {
+                throw ('Driver does not have incidents: ' + HTTP_STATUS.NOT_FOUND);
+            }
+
+            const user = await userControllers.getId(reportedBy);
+            res.send({incident: existingIncidents, user: user});
+
         } catch (err) {
             res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'No incidents found' });
         }
@@ -63,8 +83,13 @@ class incidentController {
             if (!results.length) {
                 throw ('Deliveries not found: ' + HTTP_STATUS.NOT_FOUND);
             }
+            const mapUsers = results.map(item => item.reportedBy);
+            const users = await Promise.all(mapUsers.map(async userId => {
+                return userControllers.getId(userId);
+            }));
 
-            res.send(results);
+
+            res.send({incident: results, user: users});
         } catch (err) {
             const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.NOT_FOUND;
             const message = err instanceof Error && 'message' in err ? err.message : 'Error searching delivery';

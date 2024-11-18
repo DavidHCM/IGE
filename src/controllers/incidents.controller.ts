@@ -45,8 +45,8 @@ class incidentController {
 
     async getAll(req: Request, res: Response) {
         try {
-            const results = await Incident.find({});
-            if (!results) {
+            const results = await Incident.find({}).sort({ createdAt: -1 });
+            if (!results || results.length === 0) {
                 throw ('There are no results: ' + HTTP_STATUS.NOT_FOUND);
             }
             const mapUsers = results.map(item => item.reportedBy);
@@ -54,8 +54,7 @@ class incidentController {
                 return userControllers.getId(userId);
             }));
 
-
-            res.send({incident: results, user: users});
+            res.send({ incident: results, user: users });
         } catch (err) {
             res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'No incidents found' });
         }
@@ -64,14 +63,13 @@ class incidentController {
     async getByDriver(req: Request, res: Response) {
         try {
             const reportedBy = req.query.driverId;
-            const existingIncidents = await Incident.find({ reportedBy });
-            if (!existingIncidents) {
+            const existingIncidents = await Incident.find({ reportedBy }).sort({ createdAt: -1 });
+            if (!existingIncidents || existingIncidents.length === 0) {
                 throw ('Driver does not have incidents: ' + HTTP_STATUS.NOT_FOUND);
             }
 
             const user = await userControllers.getId(reportedBy);
-            res.send({incident: existingIncidents, user: user});
-
+            res.send({ incident: existingIncidents, user: user });
         } catch (err) {
             res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'No incidents found' });
         }
@@ -79,8 +77,8 @@ class incidentController {
 
     async getOpenIncidents(req: Request, res: Response) {
         try {
-            const results = await Incident.find({ status: "open" });
-            if (!results.length) {
+            const results = await Incident.find({ status: "open" }).sort({ createdAt: -1 });
+            if (!results || results.length === 0) {
                 throw ('Deliveries not found: ' + HTTP_STATUS.NOT_FOUND);
             }
             const mapUsers = results.map(item => item.reportedBy);
@@ -88,15 +86,15 @@ class incidentController {
                 return userControllers.getId(userId);
             }));
 
-
-            res.send({incident: results, user: users});
+            res.send({ incident: results, user: users });
         } catch (err) {
             const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.NOT_FOUND;
             const message = err instanceof Error && 'message' in err ? err.message : 'Error searching delivery';
 
-            res.status(status).send({message, error: err});
+            res.status(status).send({ message, error: err });
         }
     }
+
 
 
     async getById(req: Request, res: Response) {

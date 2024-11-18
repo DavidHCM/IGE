@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { userControllers } from '../controllers/index';
+import { uploadS3 } from '../service/file-upload.service';
 import { authenticate, authorize } from "../middlewares";
 
 const router = Router();
@@ -225,5 +226,66 @@ router.post('/register', userControllers.register);
  *     description: Bad request (missing parameter or invalid credentials)
  */
 router.post('/login', userControllers.login);
+
+/**
+ * @swagger
+ * /user/upload:
+ *  post:
+ *   description: User profile pic upload
+ *   tags: [User]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     multipart/form-data:
+ *      schema:
+ *       type: object
+ *       properties:
+ *        file:
+ *         type: string
+ *         format: binary
+ *   responses:
+ *    200:
+ *     description: File uploaded successfully
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         message:
+ *          type: string
+ *         fileKey:
+ *          type: string
+ *    400:
+ *     description: Bad request (missing file or invalid format)
+ *    500:
+ *     description: Internal server error
+ */
+router.post('/upload', authenticate, authorize(['admin', 'driver', 'support']), uploadS3.single('file'), userControllers.uploadUserProfilePic);
+
+/**
+ * @swagger
+ * /user/file/{key}:
+ *  get:
+ *   description: Retrieve user profile pic
+ *   tags: [User]
+ *   parameters:
+ *    - name: key
+ *      in: path
+ *      required: true
+ *      description: The S3 key of the file to retrieve
+ *      schema:
+ *       type: string
+ *   responses:
+ *    200:
+ *     description: File retrieved successfully
+ *     content:
+ *      application/octet-stream:
+ *        schema:
+ *          type: string
+ *          format: binary
+ *    404:
+ *     description: File not found
+ */
+router.get('/file/:key',  userControllers.getUserProfilePic);
 
 export default router;

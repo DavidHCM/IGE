@@ -35,9 +35,36 @@ class rankingController {
         }
     }
 
+    async start(user: any) {
+        try {
+            const { userId, points = 0, rank = 0 } = user;
+
+            const existingRanking = await Ranking.findOne({ userId });
+
+            if (existingRanking) {
+                throw 'Ranking for this user already exists: ' + HTTP_STATUS.CONFLICT;
+            }
+
+            const newRanking = new Ranking({
+                userId,
+                points,
+                rank,
+            });
+
+            const savedRanking = await newRanking.save();
+            return savedRanking;
+        } catch (err) {
+            const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.BAD_REQUEST;
+            const message = err instanceof Error && 'message' in err ? err.message : 'Error creating ranking';
+
+            throw { status, message, error: err };
+        }
+    }
+
+
     async getAll(req: Request, res: Response) {
         try {
-            const results = await Ranking.find({});
+            const results = await Ranking.find({}).sort({ points: -1 });
             const mapUsers = results.map(item => item.userId);
 
             const users = await Promise.all(mapUsers.map(async userId => {
@@ -49,7 +76,6 @@ class rankingController {
             res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'No rankings found' });
         }
     }
-
 
     async getById(req: Request, res: Response) {
         try {

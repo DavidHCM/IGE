@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { HTTP_STATUS } from '../types/http-status-codes';
 import { uploadFileToS3, getFileFromS3 } from '../service/file-upload.service';
 import { User as UserType } from '../types/user';
+import {rankingControllers} from "./ranking.controller";
 const secretKey = process.env.JWT_SECRET;
 
 
@@ -135,6 +136,15 @@ class userController {
             });
 
             await newUser.save();
+
+            if (role === 'driver') {
+                try {
+                    await rankingControllers.start({ userId });
+                } catch (err) {
+                    console.error('Error creating ranking for driver:', err);
+                    throw 'Error creating ranking for driver: ' + HTTP_STATUS.SERVER_ERROR;
+                }
+            }
 
             res.status(HTTP_STATUS.SUCCESS).send({message: 'User registered successfully'});
 

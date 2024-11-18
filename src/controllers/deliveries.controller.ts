@@ -27,8 +27,8 @@ class deliveryController {
             const newDelivery = new Delivery({
                 deliveryId: uuidv4(),
                 assignedTo,
-                status: "Pending",
-                route: "q", // TODO: Ruta cambiarai con pickupLocation y deliveryLocation con el api externa
+                status: "in-progress",
+                route: "none", // TODO: Ruta cambiarai con pickupLocation y deliveryLocation con el api externa
                 productDetails: productWithId,
                 pickupLocation,
                 deliveryLocation,
@@ -51,7 +51,7 @@ class deliveryController {
 
     async getAll(req: Request, res: Response) {
         try {
-            const results = await Delivery.find({}).sort({ createdAt: 1 });
+            const results = await Delivery.find({}).sort({ createdAt: -1 });
             const mapUsers = results.map(item => item.assignedTo);
             const users = await Promise.all(mapUsers.map(async userId => {
                 return userControllers.getId(userId);
@@ -67,7 +67,7 @@ class deliveryController {
         try {
             const results = await Delivery.find({
                 status: { $in: ["in-progress", "stopped", "pending"] }
-            }).sort({ createdAt: 1 });
+            }).sort({ createdAt: -1 });
             const mapUsers = results.map(item => item.assignedTo);
             const users = await Promise.all(mapUsers.map(async userId => {
                 return userControllers.getId(userId);
@@ -114,7 +114,7 @@ class deliveryController {
     async getByDriver(req: Request, res: Response) {
         try {
             const assignedTo = req.query.driverId;
-            const existingDelivery = await Delivery.find({ assignedTo }).sort({ createdAt: 1 });
+            const existingDelivery = await Delivery.find({ assignedTo }).sort({ createdAt: -1 });
             if (!existingDelivery.length) {
                 throw ('Driver does not have deliveries: ' + HTTP_STATUS.NOT_FOUND);
             }

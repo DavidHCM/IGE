@@ -112,23 +112,27 @@ class routeSuggestionController {
     async routeFromMap(req: Request, res: Response): Promise<void> {
         try {
             const { start, end } = req.body;
-            console.log(start, end);
 
             if (!start || !end) {
-                throw ('Start and end cordinated requeried: ' + HTTP_STATUS.CONFLICT);
+                throw ('Inicio y fin requerido');
             }
 
-            // TODO: Esta url del server cambiaria en produccion
-            const osrmUrl = `http://localhost:5000/route/v1/driving/${start[0]},${start[1]};${end[0]},${end[1]}?overview=full&geometries=geojson`;
-            const response = await axios.get(osrmUrl);
+            const apiKey = process.env.GRASS;
+
+            if (!apiKey) {
+                throw new Error('Error en key');
+            }
+
+            const graphhopperUrl = `https://graphhopper.com/api/1/route?point=${start[1]},${start[0]}&point=${end[1]},${end[0]}&profile=car&locale=es&points_encoded=false&key=${apiKey}`;
+
+            const response = await axios.get(graphhopperUrl);
 
             const routeData = response.data;
 
-            // Enviar la respuesta al cliente en formato GeoJSON
             res.status(200).json(routeData);
         } catch (err) {
-            const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.BAD_REQUEST;
-            const message = err instanceof Error && 'message' in err ? err.message : 'Error deleting route suggestion';
+            const status = err instanceof Error && 'status' in err ? (err as any).status : 400;
+            const message = err instanceof Error && 'message' in err ? err.message : 'Error al obtener los datos de la ruta';
 
             res.status(status).send({ message, error: err });
         }

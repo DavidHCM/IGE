@@ -51,13 +51,13 @@ class deliveryController {
 
     async getAll(req: Request, res: Response) {
         try {
-            const results = await Delivery.find({});
+            const results = await Delivery.find({}).sort({ createdAt: 1 });
             const mapUsers = results.map(item => item.assignedTo);
             const users = await Promise.all(mapUsers.map(async userId => {
                 return userControllers.getId(userId);
             }));
 
-            res.status(HTTP_STATUS.SUCCESS).json({deliveries: results, users: users});
+            res.status(HTTP_STATUS.SUCCESS).json({ deliveries: results, users: users });
         } catch (err) {
             res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'No deliveries found' });
         }
@@ -67,22 +67,21 @@ class deliveryController {
         try {
             const results = await Delivery.find({
                 status: { $in: ["in-progress", "stopped", "pending"] }
-            });
+            }).sort({ createdAt: 1 });
             const mapUsers = results.map(item => item.assignedTo);
             const users = await Promise.all(mapUsers.map(async userId => {
                 return userControllers.getId(userId);
             }));
 
-            res.status(HTTP_STATUS.SUCCESS).json({deliveries: results, users: users});
+            res.status(HTTP_STATUS.SUCCESS).json({ deliveries: results, users: users });
         } catch (err) {
             res.status(HTTP_STATUS.NOT_FOUND).send({ message: 'No deliveries found' });
         }
     }
 
     async getByDate(req: Request, res: Response): Promise<void> {
-        try{
+        try {
             const { startDate, endDate } = req.body;
-            //console.log(startDate, endDate);
             if (!startDate || !endDate) {
                 throw new Error('Start date and end date are required');
             }
@@ -92,39 +91,37 @@ class deliveryController {
 
             const results = await Delivery.find({
                 scheduledTime: { $gte: start, $lte: end }
-            });
+            }).sort({ scheduledTime: 1 });
 
             if (!results.length) {
                 throw ('Deliveries not found: ' + HTTP_STATUS.NOT_FOUND);
             }
 
             const mapUsers = results.map(item => item.assignedTo);
-
             const users = await Promise.all(mapUsers.map(async userId => {
                 return userControllers.getId(userId);
             }));
 
-            res.status(HTTP_STATUS.SUCCESS).json({deliveries: results, users: users});
-            //res.status(HTTP_STATUS.SUCCESS).json(results);
-        }catch(err) {
+            res.status(HTTP_STATUS.SUCCESS).json({ deliveries: results, users: users });
+        } catch (err) {
             const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.NOT_FOUND;
             const message = err instanceof Error && 'message' in err ? err.message : 'Error searching delivery';
 
-            res.status(status).send({message, error: err});
+            res.status(status).send({ message, error: err });
         }
     }
 
-    async getByDriver(req: Request, res:Response){
+    async getByDriver(req: Request, res: Response) {
         try {
             const assignedTo = req.query.driverId;
-            const existingDelivery = await Delivery.find({ assignedTo });
-            if (!existingDelivery) {
+            const existingDelivery = await Delivery.find({ assignedTo }).sort({ createdAt: 1 });
+            if (!existingDelivery.length) {
                 throw ('Driver does not have deliveries: ' + HTTP_STATUS.NOT_FOUND);
             }
 
             const user = await userControllers.getId(assignedTo);
 
-            res.send({delivery: existingDelivery, user: user});
+            res.send({ delivery: existingDelivery, user: user });
         } catch (err) {
             const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.NOT_FOUND;
             const message = err instanceof Error && 'message' in err ? err.message : 'Error fetching delivery';
@@ -132,8 +129,6 @@ class deliveryController {
             res.status(status).send({ message, error: err });
         }
     }
-
-
 
     async getById(req: Request, res: Response) {
         try {
@@ -149,7 +144,7 @@ class deliveryController {
 
             res.status(status).send({ message, error: err });
         }
-    };
+    }
 
     async update(req: Request, res: Response) {
         try {
@@ -196,8 +191,6 @@ class deliveryController {
             res.status(status).send({ message, error: err });
         }
     };
-
-
 
     async delete(req: Request, res: Response) {
         try{

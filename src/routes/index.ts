@@ -9,7 +9,8 @@ import chatMessageRoute from "./chatMessage.route";
 import { authenticate, authorize } from "../middlewares";
 const router = express.Router();
 import { HTTP_STATUS } from "../types/http-status-codes";
-
+import {config} from "dotenv";
+config();
 
 router.use(express.json());
 

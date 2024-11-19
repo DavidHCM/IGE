@@ -7,7 +7,11 @@ import { HTTP_STATUS } from '../types/http-status-codes';
 import { uploadFileToS3, getFileFromS3 } from '../service/file-upload.service';
 import { User as UserType } from '../types/user';
 import {rankingControllers} from "./ranking.controller";
+import {config} from "dotenv";
+config();
+
 const secretKey = process.env.JWT_SECRET;
+
 
 
 class userController {
@@ -159,6 +163,7 @@ class userController {
     async login(req: Request, res: Response) {
         try {
             const {email, password}: UserType = req.body;
+            console.log(secretKey)
             if (!email || !password) {
                 throw 'Missing required fields: ' + HTTP_STATUS.BAD_REQUEST;
             }
@@ -187,6 +192,7 @@ class userController {
             res.status(HTTP_STATUS.SUCCESS).send({token, message: 'Login successful'});
 
         } catch (err) {
+            console.log(err)
             const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.BAD_REQUEST;
             const message = err instanceof Error && 'message' in err ? err.message : 'Error logging in user';
 

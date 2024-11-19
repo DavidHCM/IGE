@@ -3,11 +3,14 @@ import multer, { FileFilterCallback } from 'multer';
 import { Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import {Readable} from "node:stream";
+import {config} from "dotenv";
+config();
 
 const accessKey = process.env.S3_ACCESS_KEY;
 const secretKey = process.env.S3_SECRET_KEY;
 const region = process.env.S3_REGION;
 const bucketName = process.env.S3_BUCKET_NAME;
+
 
 const s3Client = new S3Client({
     region: region || 'us-east-1',

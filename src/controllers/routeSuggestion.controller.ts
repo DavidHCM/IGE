@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import axios from 'axios';
 import RouteSuggestion from './../models/routeSuggestion.model';
 import { HTTP_STATUS } from '../types/http-status-codes';
 import { RouteSuggestion as RouteType } from "../types/routeSuggestion";
@@ -107,6 +108,36 @@ class routeSuggestionController {
             res.status(status).send({ message, error: err });
         }
     }
+
+    async routeFromMap(req: Request, res: Response): Promise<void> {
+        try {
+            const { start, end } = req.body;
+
+            if (!start || !end) {
+                throw ('Inicio y fin requerido');
+            }
+
+            const apiKey = process.env.GRASS;
+
+            if (!apiKey) {
+                throw new Error('Error en key');
+            }
+
+            const graphhopperUrl = `https://graphhopper.com/api/1/route?point=${start[1]},${start[0]}&point=${end[1]},${end[0]}&profile=car&locale=es&points_encoded=false&key=${apiKey}`;
+
+            const response = await axios.get(graphhopperUrl);
+
+            const routeData = response.data;
+
+            res.status(200).json(routeData);
+        } catch (err) {
+            const status = err instanceof Error && 'status' in err ? (err as any).status : 400;
+            const message = err instanceof Error && 'message' in err ? err.message : 'Error al obtener los datos de la ruta';
+
+            res.status(status).send({ message, error: err });
+        }
+    }
+
 }
 
 export const routeSuggestionControllers = new routeSuggestionController();

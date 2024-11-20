@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { userControllers } from '../controllers/index';
+import { uploadS3 } from '../service/file-upload.service';
 import { authenticate, authorize } from "../middlewares";
 
 const router = Router();
@@ -22,9 +23,6 @@ const router = Router();
  *      type: string
  *      format: email
  *      description: The user's email address
- *     password:
- *      type: string
- *      description: The user's password
  *     createdAt:
  *      type: string
  *      format: date-time
@@ -57,6 +55,37 @@ router.get('', authenticate, authorize(['admin']), userControllers.getAll);
 
 /**
  * @swagger
+ * /user/drivers:
+ *  get:
+ *   description: Get a the users that are drivers
+ *   tags: [User]
+ *   security:
+ *    - bearerAuth: []
+ *   parameters:
+ *    - name: userId
+ *      in: path
+ *      required: true
+ *      schema:
+ *       type: string
+ *      description: The users that are drivers
+ *   responses:
+ *    200:
+ *     description: User details
+ *     content:
+ *      application/json:
+ *       schema:
+ *        $ref: '#/components/schemas/User'
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ *    404:
+ *     description: User not found
+ */
+router.get('/drivers',authenticate, authorize(['admin', 'driver', 'support']), userControllers.getDrivers);
+
+/**
+ * @swagger
  * /user/{userId}:
  *  get:
  *   description: Get a specific user by ID
@@ -84,7 +113,7 @@ router.get('', authenticate, authorize(['admin']), userControllers.getAll);
  *    404:
  *     description: User not found
  */
-router.get('/:userId', authenticate, authorize(['admin', 'user', 'support']), userControllers.getById);
+router.get('/:userId', authenticate, authorize(['admin', 'driver', 'support']), userControllers.getById);
 
 /**
  * @swagger
@@ -117,7 +146,7 @@ router.get('/:userId', authenticate, authorize(['admin', 'user', 'support']), us
  *    404:
  *     description: User not found
  */
-router.put('/:userId', authenticate, authorize(['admin', 'user']), userControllers.update);
+router.put('/:userId', authenticate, authorize(['admin', 'driver']), userControllers.update);
 
 /**
  * @swagger
@@ -197,5 +226,66 @@ router.post('/register', userControllers.register);
  *     description: Bad request (missing parameter or invalid credentials)
  */
 router.post('/login', userControllers.login);
+
+/**
+ * @swagger
+ * /user/upload:
+ *  post:
+ *   description: User profile pic upload
+ *   tags: [User]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     multipart/form-data:
+ *      schema:
+ *       type: object
+ *       properties:
+ *        file:
+ *         type: string
+ *         format: binary
+ *   responses:
+ *    200:
+ *     description: File uploaded successfully
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: object
+ *        properties:
+ *         message:
+ *          type: string
+ *         fileKey:
+ *          type: string
+ *    400:
+ *     description: Bad request (missing file or invalid format)
+ *    500:
+ *     description: Internal server error
+ */
+router.post('/upload', authenticate, authorize(['admin', 'driver', 'support']), uploadS3.single('file'), userControllers.uploadUserProfilePic);
+
+/**
+ * @swagger
+ * /user/file/{key}:
+ *  get:
+ *   description: Retrieve user profile pic
+ *   tags: [User]
+ *   parameters:
+ *    - name: key
+ *      in: path
+ *      required: true
+ *      description: The S3 key of the file to retrieve
+ *      schema:
+ *       type: string
+ *   responses:
+ *    200:
+ *     description: File retrieved successfully
+ *     content:
+ *      application/octet-stream:
+ *        schema:
+ *          type: string
+ *          format: binary
+ *    404:
+ *     description: File not found
+ */
+router.get('/file/:key',  userControllers.getUserProfilePic);
 
 export default router;

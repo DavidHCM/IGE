@@ -51,7 +51,7 @@ const router = Router();
  *    403:
  *     description: Forbidden
  */
-router.post('', authenticate, authorize(['admin', 'user', 'driver']), incidentControllers.create);
+router.post('', authenticate, authorize(['admin', 'driver']), incidentControllers.create);
 
 /**
  * @swagger
@@ -76,6 +76,54 @@ router.post('', authenticate, authorize(['admin', 'user', 'driver']), incidentCo
  *     description: Forbidden
  */
 router.get('', authenticate, authorize(['admin', 'support']), incidentControllers.getAll);
+
+/**
+ * @swagger
+ * /incident/byDriver:
+ *  get:
+ *   description: Get all incident reports by a driver
+ *   tags: [Incident]
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    200:
+ *     description: A list of incident reports by a driver
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: array
+ *        items:
+ *         $ref: '#/components/schemas/Incident'
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ */
+router.get('/byDriver', authenticate, authorize(['admin', 'driver']), incidentControllers.getByDriver);
+
+/**
+ * @swagger
+ * /incident/OpenIncidents:
+ *  get:
+ *   description: Get all the open incidents
+ *   tags: [Incident]
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    200:
+ *     description: A list of open incident reports
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: array
+ *        items:
+ *         $ref: '#/components/schemas/Incident'
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ */
+router.get('/OpenIncidents', authenticate, authorize(['admin', 'support']), incidentControllers.getOpenIncidents);
 
 /**
  * @swagger
@@ -106,7 +154,7 @@ router.get('', authenticate, authorize(['admin', 'support']), incidentController
  *    404:
  *     description: Incident not found
  */
-router.get('/:incidentId', authenticate, authorize(['admin', 'user', 'support']), incidentControllers.getById);
+router.get('/:incidentId', authenticate, authorize(['admin', 'driver', 'support']), incidentControllers.getById);
 
 /**
  * @swagger

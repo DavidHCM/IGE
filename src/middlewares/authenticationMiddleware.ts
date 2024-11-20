@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { HTTP_STATUS } from '../types/http-status-codes';
 import jwt from 'jsonwebtoken';
 import { User } from "../types/user";
+import {config} from "dotenv";
+config();
 const secretKey = process.env.JWT_SECRET;
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {

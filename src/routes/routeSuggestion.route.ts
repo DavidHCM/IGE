@@ -165,4 +165,30 @@ router.put('/:routeSuggestionId', authenticate, authorize(['admin', 'driver']), 
  */
 router.delete('/:routeSuggestionId', authenticate, authorize(['admin']), routeSuggestionControllers.delete);
 
+
+/**
+ * @swagger
+ * /routeFromMap:
+ *  post:
+ *   description: Get a route from the map given the start and end points
+ *   tags: [RouteSuggestion]
+ *   security:
+ *    - bearerAuth: []
+ *   responses:
+ *    200:
+ *     description: The route given
+ *     content:
+ *      application/json:
+ *       schema:
+ *        type: array
+ *        items:
+ *         $ref: '#/components/schemas/RouteSuggestion'
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ */
+//router.post('/routeFromMap', authenticate, authorize(['admin', 'driver', 'support', 'user']), routeSuggestionControllers.routeFromMap);
+router.post('/routeFromMap', routeSuggestionControllers.routeFromMap);
+
 export default router;

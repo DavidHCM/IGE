@@ -6,8 +6,11 @@ import userRoutes from "./user.route";
 import rankingRoutes from "./ranking.route";
 import notificationRoute from "./notification.route";
 import chatMessageRoute from "./chatMessage.route";
+import { authenticate, authorize } from "../middlewares";
 const router = express.Router();
 import { HTTP_STATUS } from "../types/http-status-codes";
+import {config} from "dotenv";
+config();
 
 router.use(express.json());
 
@@ -93,6 +96,16 @@ router.use("/notification", notificationRoute);
  *  description: Chat messages management
  */
 router.use("/message", chatMessageRoute);
+
+/**
+ * @swagger
+ * tags:
+ *  name: Auth  
+ *  description: Auth for general routes when loggin in
+ */
+router.get("/auth", authenticate, (req,res) =>{
+    res.sendStatus(200);
+});
 
 /**
  * @swagger

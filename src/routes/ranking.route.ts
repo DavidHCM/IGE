@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { rankingControllers } from '../controllers/index';
 import { authenticate, authorize } from "../middlewares";
+import {config} from "dotenv";
+config();
 
 const router = Router();
 

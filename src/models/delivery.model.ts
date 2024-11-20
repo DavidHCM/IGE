@@ -3,7 +3,7 @@ import { Schema, model, SchemaTypes } from 'mongoose';
 const deliverySchema = new Schema({
     deliveryId: { type: SchemaTypes.String, required: true },
     assignedTo: { type: SchemaTypes.String, required: true },
-    status: { type: SchemaTypes.String, required: true },
+    status: { type: SchemaTypes.String, required: true }, // in-progress, completed, stopped, canceled, Pending
     route: { type: SchemaTypes.String, required: true },
     productDetails: {
         productId: { type: SchemaTypes.String, required: true },

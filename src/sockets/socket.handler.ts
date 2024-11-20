@@ -10,12 +10,12 @@ interface NotificationData {
 
 const notificationSocketHandler = (io: Server) => {
     io.on('connection', (socket: Socket) => {
-        console.log(`Usuario conectado: ${socket.id}`);
+        //console.log(`Usuario conectado: ${socket.id}`);
 
         socket.on('registerUser', ({ userId, role }: { userId: string; role: string }) => {
             socket.data.userId = userId;
             socket.data.role = role;
-            console.log(`Usuario registrado: ${userId}, Rol: ${role}`);
+            //console.log(`Usuario registrado: ${userId}, Rol: ${role}`);
         });
 
         socket.on('sendNotification', async (data: NotificationData) => {
@@ -67,7 +67,7 @@ const notificationSocketHandler = (io: Server) => {
         });
 
         socket.on('disconnect', () => {
-            console.log(`Usuario desconectado: ${socket.id}`);
+            //console.log(`Usuario desconectado: ${socket.id}`);
         });
     });
 };

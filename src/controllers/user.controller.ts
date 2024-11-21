@@ -92,6 +92,39 @@ class userController {
         }
     }
 
+    async updatePassword(req: Request, res: Response){
+        try {
+            const { token, newPassword } = req.body;
+            if (!newPassword || !token) {
+                throw ('No user or password provided: ' + HTTP_STATUS.NOT_FOUND);
+            }
+
+            const decoded = jwt.verify(token as string, process.env.JWT_SECRET!) as { userId: string };
+            const userId = decoded.userId;
+
+            const existingUser = await User.findOne({userId});
+            if (!existingUser) {
+                throw ('User does not exist: ' + HTTP_STATUS.NOT_FOUND);
+            }
+
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+            const updatedUser = await User.findOneAndUpdate(
+                { userId },
+                { password: hashedPassword },
+                { new: true, runValidators: true }
+            );
+
+            res.status(HTTP_STATUS.SUCCESS).send({message: 'User updated successfully'});
+
+        } catch (err) {
+            const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.NOT_FOUND;
+            const message = err instanceof Error && 'message' in err ? err.message : 'Error fetching user';
+
+            res.status(status).send({message, error: err});
+        }
+    }
+
     async delete(req: Request, res: Response) {
         try {
             const userId = req.params.userId;

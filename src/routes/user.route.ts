@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {passwordController, userControllers} from '../controllers/index';
 import { uploadS3 } from '../service/file-upload.service';
 import { authenticate, authorize } from "../middlewares";
+import passport from 'passport';
 
 const router = Router();
 
@@ -227,6 +228,20 @@ router.post('/register', userControllers.register);
  *     description: Bad request (missing parameter or invalid credentials)
  */
 router.post('/login', userControllers.login);
+
+    
+router.get('/google', passport.authenticate('google', { 
+    scope: ['profile', 'email'] 
+}));
+
+router.get('/callback',
+    passport.authenticate('google', { 
+        failureRedirect: '/login' 
+    }),
+    (req, res) => {
+      res.redirect('/'); // Enviar a home
+    }
+);
 
 /**
  * @swagger

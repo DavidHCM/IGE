@@ -5,3 +5,4 @@ export { userControllers } from './user.controller';
 export { rankingControllers } from './ranking.controller';
 export { notificationControllers } from './notification.controller';
 export { chatMessageControllers } from './chatMessage.controller';
+export { passwordController } from './mail.controller';

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { userControllers } from '../controllers/index';
+import {passwordController, userControllers} from '../controllers/index';
 import { uploadS3 } from '../service/file-upload.service';
 import { authenticate, authorize } from "../middlewares";
 
@@ -28,6 +28,7 @@ const router = Router();
  *      format: date-time
  *      description: The time the user was created
  */
+
 
 /**
  * @swagger
@@ -226,6 +227,70 @@ router.post('/register', userControllers.register);
  *     description: Bad request (missing parameter or invalid credentials)
  */
 router.post('/login', userControllers.login);
+
+/**
+ * @swagger
+ * /user/send-reset-password-email:
+ *  post:
+ *   description: Reset password email
+ *   tags: [User]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       type: object
+ *       properties:
+ *        email:
+ *         type: string
+ *         format: email
+ *        password:
+ *         type: string
+ *   responses:
+ *    200:
+ *     description: Route to send to the user the reset-password-email
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         token:
+ *          type: string
+ *    400:
+ *     description: Bad request (missing parameter or invalid credentials)
+ */
+router.post('/send-reset-password-email', passwordController.sendResetPasswordEmail);
+
+/**
+ * @swagger
+ * /user/reset-password:
+ *  post:
+ *   description: Updating the password
+ *   tags: [User]
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       type: object
+ *       properties:
+ *        email:
+ *         type: string
+ *         format: email
+ *        password:
+ *         type: string
+ *   responses:
+ *    200:
+ *     description: Route to update the password
+ *     content:
+ *      application/json:
+ *       schema:
+ *        properties:
+ *         token:
+ *          type: string
+ *    400:
+ *     description: Bad request (missing parameter or invalid credentials)
+ */
+router.post('/reset-password', userControllers.updatePassword);
 
 /**
  * @swagger

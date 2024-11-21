@@ -6,6 +6,7 @@ import userRoutes from "./user.route";
 import rankingRoutes from "./ranking.route";
 import notificationRoute from "./notification.route";
 import chatMessageRoute from "./chatMessage.route";
+import passwordReset from "./passwordReset.route";
 import { authenticate, authorize } from "../middlewares";
 const router = express.Router();
 import { HTTP_STATUS } from "../types/http-status-codes";
@@ -96,6 +97,15 @@ router.use("/notification", notificationRoute);
  *  description: Chat messages management
  */
 router.use("/message", chatMessageRoute);
+
+
+/**
+ * @swagger
+ * tags:
+ *  name: Password
+ *  description: Password reset route
+ */
+router.use("/resetPassword", passwordReset);
 
 /**
  * @swagger

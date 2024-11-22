@@ -52,6 +52,31 @@ router.post('', authenticate, authorize(['user', 'admin', 'driver', 'support']),
 
 /**
  * @swagger
+ * /messages/:roomName:
+ *  post:
+ *   description: Get chat messages from a room
+ *   tags: [Chat]
+ *   security:
+ *    - bearerAuth: []
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       $ref: '#/components/schemas/ChatMessage'
+ *   responses:
+ *    201:
+ *     description: Chat message fetch succesfull
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ */
+router.get('/messages/:roomName', authenticate, authorize(['admin', 'driver', 'support']), chatMessageControllers.getMessagesByRoom);
+
+
+/**
+ * @swagger
  * /message:
  *  get:
  *   description: Get all chat messages

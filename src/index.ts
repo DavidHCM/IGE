@@ -8,6 +8,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import swaggerConfig from '../swagger.config.json';
 import notificationSocketHandler from './sockets/socket.handler';
+import chatSocketHandler from './sockets/chatSocker.handler'
 
 
 config();
@@ -31,6 +32,7 @@ const io = new Server(httpServer, {
 });
 
 notificationSocketHandler(io);
+chatSocketHandler(io);
 
 
 mongoose.connect(dbURL as string).then(() => {
@@ -53,6 +55,7 @@ mongoose.connect(dbURL as string).then(() => {
     });
 
     notificationSocketHandler(io);
+    chatSocketHandler(io);
 
 }).catch((err) => {
     console.error('Error al conectar a la base de datos:', err);

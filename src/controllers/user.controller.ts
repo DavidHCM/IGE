@@ -218,7 +218,8 @@ class userController {
             const token = jwt.sign({
                 userId: expectedUser.userId,
                 email: expectedUser.email,
-                role: expectedUser.role
+                role: expectedUser.role,
+                name: expectedUser.name
             }, secretKey as string);
 
             res.status(HTTP_STATUS.SUCCESS).send({token, message: 'Login successful'});

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import ChatMessage from './../models/chatMessage.model';
 import { HTTP_STATUS } from '../types/http-status-codes';
 import { ChatMessage as ChatMessageType } from '../types/chatMessage';
+import mongoose from "mongoose";
 
 class chatMessageController {
     async create(req: Request, res: Response) {
@@ -39,6 +40,44 @@ class chatMessageController {
             res.status(status).send({ message, error: err });
         }
     }
+
+    async saveMessage(data: { fromUserId: string; toUserId: string; deliveryId: string; content: string; }){
+        try {
+            const newMessage = new ChatMessage({
+                messageId: new mongoose.Types.ObjectId().toString(),
+                fromUserId: data.fromUserId,
+                toUserId: data.toUserId,
+                deliveryId: data.deliveryId,
+                content: data.content,
+            });
+
+            const savedMessage = await newMessage.save();
+            return savedMessage;
+        } catch (err) {
+            console.error('Error saving message:', err);
+            throw new Error('Error saving message');
+        }
+    }
+
+    async getMessagesByRoom(req: Request, res: Response) {
+        try {
+            const { roomName } = req.params;
+            const messages = await ChatMessage.find({ deliveryId: roomName });
+            res.status(HTTP_STATUS.SUCCESS).json(messages);
+        } catch (err) {
+            res.status(HTTP_STATUS.BAD_REQUEST).send({ message: 'Error fetching messages', error: err });
+        }
+    }
+
+    async getMessagesByRoomId(roomName: string) {
+        try {
+            return await ChatMessage.find({ deliveryId: roomName });
+        } catch (err) {
+            console.error('Error fetching messages for room:', err);
+            throw new Error('Error fetching messages for room');
+        }
+    }
+
 
     async getAll(req: Request, res: Response) {
         try {

@@ -11,7 +11,5 @@
     "resolveJsonModule": true,
     "strictNullChecks": false,
   },
-  "include": [
-    "src/**/*.ts"
-  ]
+  "include": ["src/**/*", "src/public/views/**/*.html"]
 }

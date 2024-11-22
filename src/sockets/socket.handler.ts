@@ -27,11 +27,9 @@ const notificationSocketHandler = (io: Server) => {
                     return;
                 }
 
-                // Enviar notificación a todos
                 if (type === 'all') {
                     io.emit('receiveNotification', { message });
                 }
-                // Enviar notificación a un rol específico
                 else if (type === 'specificRole' && roleId) {
                     const sockets = [...io.sockets.sockets.values()];
                     sockets.forEach((s) => {
@@ -40,7 +38,6 @@ const notificationSocketHandler = (io: Server) => {
                         }
                     });
                 }
-                // Enviar notificación a un usuario específico
                 else if (type === 'specificUser' && userId) {
                     const targetSocket = [...io.sockets.sockets.values()].find(
                         (s) => s.data.userId === userId
@@ -52,7 +49,6 @@ const notificationSocketHandler = (io: Server) => {
                     console.error('Tipo de notificación inválido:', type);
                 }
 
-                // Guardar la notificación en la base de datos
                 await notificationControllers.saveFromSocket({
                     notificationId: `${Date.now()}-${socket.id}`,
                     message,

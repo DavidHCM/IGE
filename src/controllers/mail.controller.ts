@@ -25,7 +25,8 @@ class PasswordController {
         });
 
 
-        const html = fs.readFileSync(path.join(__dirname, '..', 'public', 'views', 'emails', 'reset-password.html')).toString();
+        const htmlPath = path.resolve(process.cwd(), 'src/public/views/emails/reset-password.html');
+        const html = fs.readFileSync(htmlPath, 'utf8');
         const customizedHtml = html.replace('{resetLink}', resetLink);
 
 
@@ -56,8 +57,12 @@ class PasswordController {
 
             jwt.verify(token as string, process.env.JWT_SECRET!);
 
-            const filePath = path.join(__dirname, '..', 'public', 'views', 'emails', 'reset-password-form.html');
-            console.log(filePath);
+            const filePath = path.resolve(process.cwd(), 'src/public/views/emails/reset-password-form.html');
+
+            // Verifica si el archivo existe
+            if (!fs.existsSync(filePath)) {
+                throw new Error(`El archivo no existe en la ruta especificada: ${filePath}`);
+            }
             const htmlContent = fs.readFileSync(filePath, 'utf8').replace('{token}', token as string);
 
 

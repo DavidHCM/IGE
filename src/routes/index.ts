@@ -128,8 +128,9 @@ router.get("/auth", authenticate, (req,res) =>{
  *      description: Bad request error
  */
 router.use((err: any, req: Request, res: Response, next: NextFunction) => {
-    const statusCode = HTTP_STATUS.BAD_REQUEST;
-    const message = err.message.split(': ')[0];
+    const statusCode = err.status || HTTP_STATUS.SERVER_ERROR;
+    const message = typeof err.message === 'string' ? err.message : 'An unexpected error occurred';
+    console.log(message)
     res.status(statusCode).send({ message, statusCode });
 });
 

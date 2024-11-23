@@ -63,7 +63,10 @@ class PasswordController {
             if (!fs.existsSync(filePath)) {
                 throw new Error(`El archivo no existe en la ruta especificada: ${filePath}`);
             }
+<<<<<<< HEAD
 
+=======
+>>>>>>> testing
             const htmlContent = fs.readFileSync(filePath, 'utf8').replace('{token}', token as string);
 
 

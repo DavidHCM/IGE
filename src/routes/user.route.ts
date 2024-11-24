@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import {passwordController, userControllers} from '../controllers/index';
 import { uploadS3 } from '../service/file-upload.service';
-import { authenticate, authorize } from "../middlewares";
 import passport from 'passport';
+import { authenticate, authorize, validateRequest } from "../middlewares";
+import { validateRegisterUser, validateUserIdParam, validateLogin, validateUploadProfilePic } from '../validators/user.validator';
 
 const router = Router();
 
@@ -115,7 +116,7 @@ router.get('/drivers',authenticate, authorize(['admin', 'driver', 'support']), u
  *    404:
  *     description: User not found
  */
-router.get('/:userId', authenticate, authorize(['admin', 'driver', 'support']), userControllers.getById);
+router.get('/:userId', authenticate, authorize(['admin', 'driver', 'support']),  validateUserIdParam, validateRequest, userControllers.getById);
 
 /**
  * @swagger
@@ -195,7 +196,7 @@ router.delete('/:userId', authenticate, authorize(['admin']), userControllers.de
  *    400:
  *     description: Bad request (missing parameter or invalid data)
  */
-router.post('/register', userControllers.register);
+router.post('/register',validateRegisterUser, validateRequest, userControllers.register);
 
 /**
  * @swagger
@@ -227,7 +228,7 @@ router.post('/register', userControllers.register);
  *    400:
  *     description: Bad request (missing parameter or invalid credentials)
  */
-router.post('/login', userControllers.login);
+router.post('/login',validateLogin, validateRequest, userControllers.login);
 
     
 router.get('/google', passport.authenticate('google', { 
@@ -340,7 +341,7 @@ router.post('/reset-password', userControllers.updatePassword);
  *    500:
  *     description: Internal server error
  */
-router.post('/upload', authenticate, authorize(['admin', 'driver', 'support']), uploadS3.single('file'), userControllers.uploadUserProfilePic);
+router.post('/upload', authenticate, authorize(['admin', 'driver', 'support']), uploadS3.single('file'),  validateUploadProfilePic, validateRequest, userControllers.uploadUserProfilePic);
 
 /**
  * @swagger

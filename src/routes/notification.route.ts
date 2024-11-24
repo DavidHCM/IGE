@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { notificationControllers } from '../controllers/index';
-import { authenticate, authorize } from "../middlewares";
+import { authenticate, authorize, validateRequest } from "../middlewares";
+import { validateCreateNotification, validateNotificationIdParam, validateUpdateNotification } from '../validators/notification.validator';
 
 const router = Router();
 
@@ -51,7 +52,7 @@ const router = Router();
  *    403:
  *     description: Forbidden
  */
-router.post('', authenticate, authorize(['admin']), notificationControllers.create);
+router.post('', authenticate, authorize(['admin']),validateCreateNotification,validateRequest, notificationControllers.create);
 
 /**
  * @swagger
@@ -130,7 +131,7 @@ router.get('/byUser', authenticate, authorize(['admin', 'support', 'driver', 'us
  *    404:
  *     description: Notification not found
  */
-router.get('/:notificationId', authenticate, authorize(['admin', 'support', 'user', 'driver']), notificationControllers.getById);
+router.get('/:notificationId', authenticate, authorize(['admin', 'support', 'user', 'driver']),validateNotificationIdParam,validateRequest, notificationControllers.getById);
 
 /**
  * @swagger
@@ -163,7 +164,7 @@ router.get('/:notificationId', authenticate, authorize(['admin', 'support', 'use
  *    404:
  *     description: Notification not found
  */
-router.put('/:notificationId', authenticate, authorize(['admin']), notificationControllers.update);
+router.put('/:notificationId', authenticate, authorize(['admin']),validateNotificationIdParam,validateUpdateNotification,validateRequest, notificationControllers.update);
 
 /**
  * @swagger
@@ -190,6 +191,6 @@ router.put('/:notificationId', authenticate, authorize(['admin']), notificationC
  *    404:
  *     description: Notification not found
  */
-router.delete('/:notificationId', authenticate, authorize(['admin']), notificationControllers.delete);
+router.delete('/:notificationId', authenticate, authorize(['admin']),validateNotificationIdParam,validateRequest, notificationControllers.delete);
 
 export default router;

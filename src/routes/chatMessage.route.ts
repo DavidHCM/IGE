@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { chatMessageControllers } from '../controllers/index';
-import { authenticate, authorize } from "../middlewares";
-
+import { authenticate, authorize, validateRequest } from "../middlewares";
+import { validateCreateChatMessage, validateMessageIdParam, validateRoomNameParam, validateUpdateChatMessage } from '../validators/chatMessage.validator';
 const router = Router();
 
 /**
@@ -48,7 +48,32 @@ const router = Router();
  *    403:
  *     description: Forbidden
  */
-router.post('', authenticate, authorize(['user', 'admin', 'driver', 'support']), chatMessageControllers.create);
+router.post('', authenticate, authorize(['user', 'admin', 'driver', 'support']),validateCreateChatMessage,validateRequest, chatMessageControllers.create);
+
+/**
+ * @swagger
+ * /messages/:roomName:
+ *  post:
+ *   description: Get chat messages from a room
+ *   tags: [Chat]
+ *   security:
+ *    - bearerAuth: []
+ *   requestBody:
+ *    required: true
+ *    content:
+ *     application/json:
+ *      schema:
+ *       $ref: '#/components/schemas/ChatMessage'
+ *   responses:
+ *    201:
+ *     description: Chat message fetch succesfull
+ *    401:
+ *     description: Unauthorized
+ *    403:
+ *     description: Forbidden
+ */
+router.get('/messages/:roomName', authenticate, authorize(['admin', 'driver', 'support']),validateRoomNameParam,validateRequest, chatMessageControllers.getMessagesByRoom);
+
 
 /**
  * @swagger
@@ -103,7 +128,7 @@ router.get('', authenticate, authorize(['admin', 'user', 'driver', 'support']), 
  *    404:
  *     description: Message not found
  */
-router.get('/:messageId', authenticate, authorize(['admin', 'user', 'driver', 'support']), chatMessageControllers.getById);
+router.get('/:messageId', authenticate, authorize(['admin', 'user', 'driver', 'support']),validateMessageIdParam,validateRequest, chatMessageControllers.getById);
 
 /**
  * @swagger
@@ -136,7 +161,7 @@ router.get('/:messageId', authenticate, authorize(['admin', 'user', 'driver', 's
  *    404:
  *     description: Message not found
  */
-router.put('/:messageId', authenticate, authorize(['admin', 'user', 'driver', 'support']), chatMessageControllers.update);
+router.put('/:messageId', authenticate, authorize(['admin', 'user', 'driver', 'support']),validateMessageIdParam,validateUpdateChatMessage,validateRequest, chatMessageControllers.update);
 
 /**
  * @swagger
@@ -163,6 +188,6 @@ router.put('/:messageId', authenticate, authorize(['admin', 'user', 'driver', 's
  *    404:
  *     description: Message not found
  */
-router.delete('/:messageId', authenticate, authorize(['admin']), chatMessageControllers.delete);
+router.delete('/:messageId', authenticate, authorize(['admin']),validateMessageIdParam,validateRequest, chatMessageControllers.delete);
 
 export default router;

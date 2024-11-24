@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { deliveryControllers } from '../controllers/index';
-import { authenticate, authorize } from "../middlewares";
-
+import { authenticate, authorize, validateRequest } from "../middlewares";
+import { validateCreateDelivery, validateDeliveryIdParam, validateGetByDate, validateUpdateDelivery} from '../validators/deliveries.validator';
 const router = Router();
 
 /**
@@ -48,7 +48,7 @@ const router = Router();
  *    403:
  *     description: Forbidden
  */
-router.post('', authenticate, authorize(['admin']), deliveryControllers.create);
+router.post('', authenticate, authorize(['admin']),validateCreateDelivery,validateRequest, deliveryControllers.create);
 
 /**
  * @swagger
@@ -96,7 +96,7 @@ router.get('/byDriver', authenticate, authorize(['admin', 'driver']), deliveryCo
  *    403:
  *     description: Forbidden
  */
-router.post('/byDate', authenticate, authorize(['admin', 'driver', 'user', 'support']), deliveryControllers.getByDate);
+router.post('/byDate', authenticate, authorize(['admin', 'driver', 'user', 'support']),validateGetByDate,validateRequest, deliveryControllers.getByDate);
 
 
 /**
@@ -176,7 +176,7 @@ router.get('/active', authenticate, authorize(['admin', 'driver', 'user', 'suppo
  *    404:
  *     description: Delivery not found
  */
-router.get('/:deliveryId', authenticate, authorize(['admin', 'driver', 'user', 'support']), deliveryControllers.getById);
+router.get('/:deliveryId', authenticate, authorize(['admin', 'driver', 'user', 'support']),validateDeliveryIdParam,validateRequest, deliveryControllers.getById);
 
 /**
  * @swagger
@@ -209,7 +209,7 @@ router.get('/:deliveryId', authenticate, authorize(['admin', 'driver', 'user', '
  *    404:
  *     description: Delivery not found
  */
-router.put('/:deliveryId', authenticate, authorize(['admin', 'driver']), deliveryControllers.update);
+router.put('/:deliveryId', authenticate, authorize(['admin', 'driver']),validateDeliveryIdParam,validateUpdateDelivery,validateRequest, deliveryControllers.update);
 
 /**
  * @swagger
@@ -236,6 +236,6 @@ router.put('/:deliveryId', authenticate, authorize(['admin', 'driver']), deliver
  *    404:
  *     description: Delivery not found
  */
-router.delete('/:deliveryId', authenticate, authorize(['admin']), deliveryControllers.delete);
+router.delete('/:deliveryId', authenticate, authorize(['admin']),validateDeliveryIdParam,validateRequest, deliveryControllers.delete);
 
 export default router;

@@ -6,10 +6,7 @@ export const authorize = (requiredRole: string[]) => {
         if (!req.user) {
             throw new Error('Not authenticated: ' + HTTP_STATUS.AUTH_ERROR);
         }
-        const { role } = req.user;
-        if (!requiredRole.includes(role)) {
-            throw new Error('Access denied: ' + HTTP_STATUS.FORBIDDEN);
-        }
+
 
         next();
     };

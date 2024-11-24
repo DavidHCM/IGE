@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { incidentControllers } from '../controllers/index';
-import { authenticate, authorize } from "../middlewares";
+import { authenticate, authorize, validateRequest } from "../middlewares";
+import { validateCreateIncident, validateIncidentIdParam, validateUpdateIncident,} from '../validators/incident.validator';
 
 const router = Router();
 
@@ -51,7 +52,7 @@ const router = Router();
  *    403:
  *     description: Forbidden
  */
-router.post('', authenticate, authorize(['admin', 'driver']), incidentControllers.create);
+router.post('', authenticate, authorize(['admin', 'driver']),validateCreateIncident,validateRequest, incidentControllers.create);
 
 /**
  * @swagger
@@ -154,7 +155,7 @@ router.get('/OpenIncidents', authenticate, authorize(['admin', 'support']), inci
  *    404:
  *     description: Incident not found
  */
-router.get('/:incidentId', authenticate, authorize(['admin', 'driver', 'support']), incidentControllers.getById);
+router.get('/:incidentId', authenticate, authorize(['admin', 'driver', 'support']),validateIncidentIdParam,validateRequest, incidentControllers.getById);
 
 /**
  * @swagger
@@ -187,7 +188,7 @@ router.get('/:incidentId', authenticate, authorize(['admin', 'driver', 'support'
  *    404:
  *     description: Incident not found
  */
-router.put('/:incidentId', authenticate, authorize(['admin']), incidentControllers.update);
+router.put('/:incidentId', authenticate, authorize(['admin']),validateIncidentIdParam,validateUpdateIncident,validateRequest, incidentControllers.update);
 
 /**
  * @swagger
@@ -214,6 +215,6 @@ router.put('/:incidentId', authenticate, authorize(['admin']), incidentControlle
  *    404:
  *     description: Incident not found
  */
-router.delete('/:incidentId', authenticate, authorize(['admin']), incidentControllers.delete);
+router.delete('/:incidentId', authenticate, authorize(['admin']),validateIncidentIdParam,validateRequest, incidentControllers.delete);
 
 export default router;

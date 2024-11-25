@@ -1,0 +1,39 @@
+[33m0193f47[m[33m ([m[1;36mHEAD -> [m[1;32mdevelop[m[33m)[m minor change
+[33mf230095[m cambios de rutass
+[33m28bfaf7[m[33m ([m[1;31morigin/develop[m[33m)[m Cambios a pruebas e api de google
+[33m8162dc3[m Merge branch 'dev-froy' into develop
+[33ma76390c[m[33m ([m[1;31morigin/dev-froy[m[33m)[m Pruebas unitarias
+[33m6c3e2d9[m[33m ([m[1;31morigin/dev-david[m[33m)[m pruebas unitarias
+[33mf95aa27[m Unit test y integration test para /user
+[33mefaa9b1[m Pruebas
+[33m1387956[m Pruebas
+[33mff74ca3[m[33m ([m[1;31morigin/testing[m[33m)[m Cambios de validaciones
+[33ma3fb8d3[m cambios path
+[33m570bd86[m Cambios de el chat y a la api de google
+[33me7b7fda[m Primer contacto con pasaport para iniciar con google
+[33mc4732bc[m Cambios para mantener antes de deploy y agregue el cambio de contra
+[33mb8abb9e[m minor change
+[33m9dbb7c3[m Merge branch 'testing'
+[33ma36f9c6[m a
+[33m343b759[m Merge branch 'testing'
+[33m9a9bf78[m cls
+[33m32fe91c[m idk por que el process.env no servia
+[33m88d457d[m Cambios a deliveires, ranking y users
+[33m4dbb4fe[m Cambios a rutas generales y añadi el s3
+[33me8c6157[m Cambios menores a unas rutas
+[33m0830d92[m Cambios a delivery esencialmente
+[33m3a064ab[m Cambios de rutas y controladores
+[33m02b79c9[m Agregando las rutas interactivas con mapa
+[33m4db70c1[m minor README change
+[33m495002c[m Cambios menores de auth
+[33m1bf6b1d[m Cambio rapido del res
+[33m0fcb864[m Implementación de documentación con swagger
+[33m1b61c30[m Cambios a el middleware y las rutas
+[33m57e8528[m Update README.md
+[33m3bb5a0d[m Update README.md
+[33mc766282[m Estas rutas fueron hechas por froy pero no lo podia subir
+[33m0330be0[m Completadas las rutas y controllers de routes y incidents
+[33m4548be7[m Agregando las rutass y los controllers faltando desarrollar dos
+[33mf900427[m Agregue esquemas principalmente, como tambien types y inicie unas rutas
+[33m2cd3978[m Agregando proyecto base
+[33m5ea712d[m README.md

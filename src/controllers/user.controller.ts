@@ -18,6 +18,9 @@ class userController {
     async getAll(req: Request, res: Response) {
         try {
             const results = await User.find({}, {password: 0});
+            if (!results || results.length === 0) {
+                throw ('User not exist: ' + HTTP_STATUS.NOT_FOUND);
+            }
             res.send(results);
         } catch (err) {
             res.status(HTTP_STATUS.NOT_FOUND).send({message: 'No users found'});
@@ -169,7 +172,8 @@ class userController {
                 role,
                 status: newStatus,
                 profilePic: '',
-                createdAt
+                createdAt,
+                googleToken:''
             });
 
             await newUser.save();
@@ -206,11 +210,13 @@ class userController {
             }
 
             const forbiddenStatuses = ['inactive', 'deleted', 'archived'];
+
             if (forbiddenStatuses.includes(expectedUser.status || '')) {
                 throw 'User account is not active: ' + HTTP_STATUS.AUTH_ERROR;
             }
 
             const isPasswordValid = await bcrypt.compare(password, expectedUser.password);
+
             if (!isPasswordValid) {
                 throw 'Invalid credentials: ' + HTTP_STATUS.AUTH_ERROR;
             }
@@ -225,9 +231,8 @@ class userController {
             res.status(HTTP_STATUS.SUCCESS).send({token, message: 'Login successful'});
 
         } catch (err) {
-            const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.BAD_REQUEST;
+            const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.NOT_FOUND;
             const message = err instanceof Error && 'message' in err ? err.message : 'Error logging in user';
-
             res.status(status).send({message, error: err});
         }
     };

@@ -9,7 +9,8 @@ import { Server } from 'socket.io';
 import swaggerConfig from '../swagger.config.json';
 import notificationSocketHandler from './sockets/socket.handler';
 import chatSocketHandler from './sockets/chatSocker.handler'
-
+import {config} from "dotenv";
+config();
 
 config();
 

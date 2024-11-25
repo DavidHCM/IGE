@@ -9,6 +9,8 @@ import { Server } from 'socket.io';
 import swaggerConfig from '../swagger.config.json';
 import notificationSocketHandler from './sockets/socket.handler';
 import chatSocketHandler from './sockets/chatSocker.handler'
+import session from "express-session";
+import passport from "passport";
 config();
 
 
@@ -18,10 +20,7 @@ const app = express();
 app.use(cors());
 
 
-import session from "express-session";
-import passport from "passport";
-const app = express();
-app.use(cors());
+
 
 app.use(
     session({

@@ -15,8 +15,22 @@ config();
 
 
 import routesIndex from './routes/index';
+import session from "express-session";
+import passport from "passport";
 const app = express();
 app.use(cors());
+
+app.use(
+    session({
+        secret: 'supersecretkey' , // Cambia esto en producción
+        resave: false,
+        saveUninitialized: true,
+        cookie: { secure: false }, // Usa `true` si tu app está en HTTPS
+    })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 const port = process.env.PORT || 3000;
 

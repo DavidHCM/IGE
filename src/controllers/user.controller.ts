@@ -172,7 +172,8 @@ class userController {
                 role,
                 status: newStatus,
                 profilePic: '',
-                createdAt
+                createdAt,
+                googleToken:''
             });
 
             await newUser.save();
@@ -225,7 +226,6 @@ class userController {
                 role: expectedUser.role,
                 name: expectedUser.name
             }, secretKey as string);
-            console.log(token)
 
             res.status(HTTP_STATUS.SUCCESS).send({token, message: 'Login successful'});
 

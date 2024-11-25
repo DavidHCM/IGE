@@ -69,5 +69,41 @@ describe('User Controller', () => {
             expect(res.status).toHaveBeenCalledWith(404);
             expect(res.send).toHaveBeenCalledWith({ message: 'No users found' });
         });
+
+        it('should return all drivers', async () => {
+            const mockDrivers = [
+                { name: 'Driver One', email: 'driver1@example.com', role: 'driver' },
+                { name: 'Driver Two', email: 'driver2@example.com', role: 'driver' }
+            ];
+            (User.find as jest.Mock).mockResolvedValueOnce(mockDrivers);
+
+            const req = {} as any;
+            const res = {
+                send: jest.fn(),
+                status: jest.fn().mockReturnThis(),
+            } as any;
+
+            await userControllers.getDrivers(req, res);
+
+            expect(res.send).toHaveBeenCalledWith(mockDrivers);
+            expect(res.status).not.toHaveBeenCalledWith(404);
+        });
+
+        it('should return a user by ID', async () => {
+            const mockUser = { name: 'Test User', email: 'test@example.com', userId: '123' };
+            (User.findOne as jest.Mock).mockResolvedValueOnce(mockUser);
+
+            const req = { params: { userId: '123' } } as any;
+            const res = {
+                send: jest.fn(),
+                status: jest.fn().mockReturnThis(),
+            } as any;
+
+            await userControllers.getById(req, res);
+
+            expect(res.send).toHaveBeenCalledWith(mockUser);
+            expect(res.status).not.toHaveBeenCalledWith(404);
+        });
+
     });
 });

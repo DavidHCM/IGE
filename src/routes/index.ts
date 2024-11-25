@@ -1,4 +1,5 @@
-import express, { Request, Response, NextFunction } from "express";
+
+import express, {Request, Response, NextFunction, Application} from "express";
 import deliveriesRoutes from "./deliveries.routes";
 import incidentsRoutes from "./incidents.routes";
 import routeSuggestionRoutes from "./routeSuggestion.route";
@@ -7,13 +8,27 @@ import rankingRoutes from "./ranking.route";
 import notificationRoute from "./notification.route";
 import chatMessageRoute from "./chatMessage.route";
 import passwordReset from "./passwordReset.route";
+
+import { googleAuth } from '../middlewares/google-auth';
+import googleAuthRoutes from '../routes/googleAuth.routes';
+
 import { authenticate, authorize } from "../middlewares";
 const router = express.Router();
 import { HTTP_STATUS } from "../types/http-status-codes";
 import {config} from "dotenv";
 config();
 
+
 router.use(express.json());
+
+
+const app: Application = express();
+googleAuth(app);
+router.use(express.json());
+
+
+
+
 
 /**
  * @swagger
@@ -110,6 +125,17 @@ router.use("/resetPassword", passwordReset);
 /**
  * @swagger
  * tags:
+<<<<<<< HEAD
+=======
+ *  name: Google
+ *  description: Google auth route
+ */
+router.use('/authGoogle', googleAuthRoutes);
+
+/**
+ * @swagger
+ * tags:
+>>>>>>> develop
  *  name: Auth  
  *  description: Auth for general routes when loggin in
  */

@@ -9,14 +9,32 @@ import { Server } from 'socket.io';
 import swaggerConfig from '../swagger.config.json';
 import notificationSocketHandler from './sockets/socket.handler';
 import chatSocketHandler from './sockets/chatSocker.handler'
-
-
 config();
 
 
 import routesIndex from './routes/index';
+
 const app = express();
 app.use(cors());
+
+
+import session from "express-session";
+import passport from "passport";
+const app = express();
+app.use(cors());
+
+app.use(
+    session({
+        secret: 'supersecretkey' , // Cambia esto en producción
+        resave: false,
+        saveUninitialized: true,
+        cookie: { secure: false }, // Usa `true` si tu app está en HTTPS
+    })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 const port = process.env.PORT || 3000;
 
@@ -60,5 +78,8 @@ mongoose.connect(dbURL as string).then(() => {
 }).catch((err) => {
     console.error('Error al conectar a la base de datos:', err);
 });
+
+export default app;
+
 
 //TODO: Cambiar las rutas de las suggestionRoutes para que implementen la libreria y tambien en el guardado de ellas en mongoDB.

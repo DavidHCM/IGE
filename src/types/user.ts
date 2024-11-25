@@ -6,6 +6,7 @@ export interface User {
     role: string;
     status?: string;
     createdAt?: Date;
+    googleToken?: string;
 }
 
 declare global {

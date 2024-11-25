@@ -9,6 +9,7 @@ const userSchema = new Schema({
     status: { type: SchemaTypes.String, required: false }, // new, active, inactive, deleted, archived
     profilePic: { type: SchemaTypes.String, required: false },
     createdAt: { type: SchemaTypes.Date, default: Date.now },
+    googleToken: {type: SchemaTypes.String}
 });
 
 const UserModel = model('users', userSchema);

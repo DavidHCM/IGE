@@ -27,9 +27,6 @@ class userController {
         }
     }
 
-
-
-
     async getDrivers(req: Request, res: Response) {
         try {
             const results = await User.find({role: 'driver'}, {password: 0});
@@ -205,18 +202,19 @@ class userController {
             if (!email || !password) {
                 throw 'Missing required fields: ' + HTTP_STATUS.BAD_REQUEST;
             }
-
             const expectedUser = await User.findOne({email});
             if (!expectedUser) {
                 throw 'User not found: ' + HTTP_STATUS.NOT_FOUND;
             }
 
             const forbiddenStatuses = ['inactive', 'deleted', 'archived'];
+
             if (forbiddenStatuses.includes(expectedUser.status || '')) {
                 throw 'User account is not active: ' + HTTP_STATUS.AUTH_ERROR;
             }
 
             const isPasswordValid = await bcrypt.compare(password, expectedUser.password);
+            console.log(isPasswordValid);
             if (!isPasswordValid) {
                 throw 'Invalid credentials: ' + HTTP_STATUS.AUTH_ERROR;
             }
@@ -227,11 +225,12 @@ class userController {
                 role: expectedUser.role,
                 name: expectedUser.name
             }, secretKey as string);
+            console.log(token)
 
             res.status(HTTP_STATUS.SUCCESS).send({token, message: 'Login successful'});
 
         } catch (err) {
-            const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.BAD_REQUEST;
+            const status = err instanceof Error && 'status' in err ? (err as any).status : HTTP_STATUS.NOT_FOUND;
             const message = err instanceof Error && 'message' in err ? err.message : 'Error logging in user';
 
             res.status(status).send({message, error: err});

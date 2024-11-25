@@ -61,4 +61,6 @@ mongoose.connect(dbURL as string).then(() => {
     console.error('Error al conectar a la base de datos:', err);
 });
 
+export default app;
+
 //TODO: Cambiar las rutas de las suggestionRoutes para que implementen la libreria y tambien en el guardado de ellas en mongoDB.

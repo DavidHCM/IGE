@@ -231,6 +231,43 @@ router.post('/register',validateRegisterUser, validateRequest, userControllers.r
 router.post('/login',validateLogin, validateRequest, userControllers.login);
 
     
+/**
+ * @swagger
+ * /user/google:
+ *  get:
+ *   description: Redirects the user to the Google authentication page.
+ *   tags: [User]
+ *   responses:
+ *    302:
+ *     description: Redirect to Google's OAuth 2.0 endpoint.
+ *    500:
+ *     description: Internal server error.
+ * 
+ * /user/callback:
+ *  get:
+ *   description: Callback URL for Google authentication.
+ *   tags: [User]
+ *   parameters:
+ *    - in: query
+ *      name: code
+ *      required: false
+ *      schema:
+ *       type: string
+ *      description: The authorization code returned from Google.
+ *    - in: query
+ *      name: error
+ *      required: false
+ *      schema:
+ *       type: string
+ *      description: Error returned from Google if authentication fails.
+ *   responses:
+ *    302:
+ *     description: Redirect to the home page after successful authentication.
+ *    401:
+ *     description: Authentication failed or invalid credentials.
+ *    500:
+ *     description: Internal server error.
+ */
 router.get('/google', passport.authenticate('google', { 
     scope: ['profile', 'email'] 
 }));
@@ -243,6 +280,7 @@ router.get('/callback',
       res.redirect('/'); // Enviar a home
     }
 );
+
 
 /**
  * @swagger

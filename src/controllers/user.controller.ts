@@ -18,11 +18,17 @@ class userController {
     async getAll(req: Request, res: Response) {
         try {
             const results = await User.find({}, {password: 0});
+            if (!results || results.length === 0) {
+                throw ('User not exist: ' + HTTP_STATUS.NOT_FOUND);
+            }
             res.send(results);
         } catch (err) {
             res.status(HTTP_STATUS.NOT_FOUND).send({message: 'No users found'});
         }
     }
+
+
+
 
     async getDrivers(req: Request, res: Response) {
         try {

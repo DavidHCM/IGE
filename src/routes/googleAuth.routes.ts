@@ -34,7 +34,7 @@ router.get(
                 process.env.JWT_SECRET!,
             );
 
-            res.redirect(`https://ige-front.onrender.com/?token=${token}`);
+            res.redirect(`https://ige-front.onrender.com/login?token=${token}`);
             //res.redirect(`http://192.168.1.84:64448/login?token=${token}`);
 
         } catch (err) {

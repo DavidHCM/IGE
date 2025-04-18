@@ -42,9 +42,9 @@ class deliveryController {
 
             res.status(HTTP_STATUS.SUCCESS).json(savedDelivery);
         } catch (err) {
-            console.error('Error creating delivery:', err);
+            console.error('Error creating delivery:', err); 
             res.status(HTTP_STATUS.BAD_REQUEST).send({
-                message: xss('Error creating delivery'),
+                message: xss('Error creating delivery'), 
             });
         }
     }
@@ -61,7 +61,7 @@ class deliveryController {
         } catch (err) {
             console.error('Error fetching all deliveries:', err);
             res.status(HTTP_STATUS.NOT_FOUND).send({
-                message: xss('No deliveries found'),
+                message: xss('No deliveries found'), 
             });
         }
     }
@@ -106,7 +106,7 @@ class deliveryController {
         } catch (err) {
             console.error('Error fetching delivery by ID:', err);
             res.status(HTTP_STATUS.NOT_FOUND).send({
-                message: xss('Error fetching delivery'),
+                message: xss('Error fetching delivery'), 
             });
         }
     }
@@ -149,9 +149,9 @@ class deliveryController {
 
             res.status(HTTP_STATUS.SUCCESS).json(updatedDelivery);
         } catch (err) {
-            console.error('Error updating delivery:', err);
+            console.error('Error updating delivery:', err); 
             res.status(HTTP_STATUS.BAD_REQUEST).send({
-                message: xss('Error updating delivery'),
+                message: xss('Error updating delivery'), 
             });
         }
     }
@@ -169,12 +169,64 @@ class deliveryController {
 
             res.status(HTTP_STATUS.SUCCESS).json(deletedDelivery);
         } catch (err) {
-            console.error('Error deleting delivery:', err);
+            console.error('Error deleting delivery:', err); 
             res.status(HTTP_STATUS.BAD_REQUEST).send({
-                message: xss('Error deleting delivery'),
+                message: xss('Error deleting delivery'), 
             });
         }
     }
+
+    async getAllActive(req: Request, res: Response) {
+        try {
+            const results = await Delivery.find({
+                status: { $in: ["in-progress", "stopped", "pending"] }
+            }).sort({ createdAt: -1 });
+            const mapUsers = results.map(item => item.assignedTo);
+            const users = await Promise.all(mapUsers.map(async userId => {
+                return userControllers.getId(userId);
+            }));
+    
+            res.status(HTTP_STATUS.SUCCESS).json({ deliveries: results, users: users });
+        } catch (err) {
+            console.error('Error getting delivery:', err); 
+            res.status(HTTP_STATUS.BAD_REQUEST).send({
+                message: xss('Error getting delivery'), 
+            });
+        }
+    }
+    
+    async getByDate(req: Request, res: Response): Promise<void> {
+        try {
+            const { startDate, endDate } = req.body;
+            if (!startDate || !endDate) {
+                throw new Error('Start date and end date are required');
+            }
+    
+            const start = new Date(startDate as string);
+            const end = new Date(endDate as string);
+    
+            const results = await Delivery.find({
+                scheduledTime: { $gte: start, $lte: end }
+            }).sort({ scheduledTime: 1 });
+    
+            if (!results.length) {
+                throw ('Deliveries not found: ' + HTTP_STATUS.NOT_FOUND);
+            }
+    
+            const mapUsers = results.map(item => item.assignedTo);
+            const users = await Promise.all(mapUsers.map(async userId => {
+                return userControllers.getId(userId);
+            }));
+    
+            res.status(HTTP_STATUS.SUCCESS).json({ deliveries: results, users: users });
+        } catch (err) {
+            console.error('Error getting delivery:', err); 
+            res.status(HTTP_STATUS.BAD_REQUEST).send({
+                message: xss('Error getting delivery'), 
+            });
+        }
+    }
+
 }
 
 export const deliveryControllers = new deliveryController();
